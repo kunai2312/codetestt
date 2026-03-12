@@ -1,0 +1,23 @@
+#include <Servo.h>
+
+Servo doorServo;
+
+void setup()
+{
+  Serial.begin(115200);
+
+  doorServo.attach(D4);   // chân tín hiệu
+}
+
+void loop()
+{
+  Serial.println("Door Open");
+
+  doorServo.write(90);    // mở cửa
+  delay(3000);
+
+  Serial.println("Door Close");
+
+  doorServo.write(0);     // đóng cửa
+  delay(3000);
+}
