@@ -1,0 +1,55 @@
+#include <Adafruit_Fingerprint.h>
+#include <SoftwareSerial.h>
+
+SoftwareSerial mySerial(D2, D1); // RX, TX
+
+Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
+
+void setup()
+{
+  Serial.begin(115200);
+  mySerial.begin(57600);
+
+  Serial.println("Fingerprint sensor test");
+
+  finger.begin(57600);
+
+  if (finger.verifyPassword())
+  {
+    Serial.println("AS608 detected!");
+  }
+  else
+  {
+    Serial.println("Fingerprint sensor not found");
+    while (1);
+  }
+}
+
+void loop()
+{
+  getFingerprintID();
+  delay(50);
+}
+
+uint8_t getFingerprintID()
+{
+  uint8_t p = finger.getImage();
+  if (p != FINGERPRINT_OK) return p;
+
+  p = finger.image2Tz();
+  if (p != FINGERPRINT_OK) return p;
+
+  p = finger.fingerFastSearch();
+  if (p != FINGERPRINT_OK)
+  {
+    Serial.println("Fingerprint not found");
+    return p;
+  }
+
+  Serial.print("Found ID #");
+  Serial.print(finger.fingerID);
+  Serial.print(" with confidence ");
+  Serial.println(finger.confidence);
+
+  return finger.fingerID;
+}
